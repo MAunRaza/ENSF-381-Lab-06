@@ -1,25 +1,61 @@
+import { useEffect, useState } from 'react';
 import Controls from './Controls';
-import sampleUsers from './sampleUsers';
 import UserList from './UserList';
 
 function UserDirectoryPage() {
-  // TODO: add users, sortBy, and viewMode state in this component.
-  // TODO: fetch the initial users with useEffect.
+  const [users, setUsers] = useState([]);
+  const [sortBy, setSortBy] = useState('id');
+  const [viewMode, setViewMode] = useState('grid');
 
-  function handleDeleteClick(userId) {
-    console.log('TODO: delete the user with id', userId);
+  // replace this with your actual Lab 04 users_api URL
+  const API_URL = 'http://localhost:3001/users_api';
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    }
+
+    fetchUsers();
+  }, []);
+
+  async function handleDeleteClick(userId) {
+    if (!userId) return;
+
+    try {
+      await fetch(`${API_URL}/${userId}`, {
+        method: 'DELETE',
+      });
+
+      setUsers(users.filter((user) => String(user.id) !== String(userId)));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
   }
 
   function handleSortByGroupClick() {
-    console.log('TODO: sort users by user_group');
+    const sortedUsers = [...users].sort(
+      (a, b) => Number(a.user_group) - Number(b.user_group)
+    );
+    setUsers(sortedUsers);
+    setSortBy('group');
   }
 
   function handleSortByIdClick() {
-    console.log('TODO: sort users by id');
+    const sortedUsers = [...users].sort(
+      (a, b) => Number(a.id) - Number(b.id)
+    );
+    setUsers(sortedUsers);
+    setSortBy('id');
   }
 
   function handleViewToggleClick() {
-    console.log('TODO: switch between grid and list layouts');
+    setViewMode(viewMode === 'grid' ? 'list' : 'grid');
   }
 
   return (
@@ -30,12 +66,17 @@ function UserDirectoryPage() {
 
       <section className="panel">
         <h2>Controls</h2>
-        <Controls />
+        <Controls
+          onDeleteClick={handleDeleteClick}
+          onSortByGroupClick={handleSortByGroupClick}
+          onSortByIdClick={handleSortByIdClick}
+          onViewToggleClick={handleViewToggleClick}
+        />
       </section>
 
       <section className="panel">
         <h2>All Users</h2>
-        <UserList users={sampleUsers} viewMode="grid" />
+        <UserList users={users} viewMode={viewMode} />
       </section>
     </>
   );

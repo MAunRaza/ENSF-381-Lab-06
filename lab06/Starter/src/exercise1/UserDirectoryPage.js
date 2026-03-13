@@ -8,7 +8,7 @@ function UserDirectoryPage() {
   const [viewMode, setViewMode] = useState('grid');
 
   // replace this with your actual Lab 04 users_api URL
-  const API_URL = 'http://localhost:3001/users_api';
+  const API_URL = 'https://69a22ec9be843d692bd0f0a4.mockapi.io/users_api';
 
   useEffect(() => {
     async function fetchUsers() {

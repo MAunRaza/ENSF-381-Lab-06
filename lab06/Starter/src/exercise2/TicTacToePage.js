@@ -6,7 +6,9 @@ function TicTacToePage() {
       </section>
 
       <section className="panel">
-        <div className="ttt-board">{/* Build Square, Board, and calculateWinner in this file. */}</div>
+        <div className="ttt-board">
+          <Board />
+        </div>
       </section>
     </>
   );
